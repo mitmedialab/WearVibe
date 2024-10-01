@@ -30,7 +30,12 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
-import android.widget.Button
+import android.content.Context.VIBRATOR_SERVICE
+import androidx.wear.compose.material.Button
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +45,21 @@ class MainActivity : ComponentActivity() {
 
         setTheme(android.R.style.Theme_DeviceDefault)
         //setContentView(R.layout.activity_main)
+
+        // Get the Vibrator service
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+
+        // Find the button in the layout
+        //val vibrateButton: Button = findViewById(R.id.vibrate_button)
+        // Set an OnClickListener on the button
+        //vibrateButton.setOnClickListener { // Check if the device has a vibrator
+        //    if (vibrator.hasVibrator()) {
+        //        // Vibrate for 500 milliseconds
+        //        val vibrationEffect =
+        //            VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE)
+         //       vibrator.vibrate(vibrationEffect)
+          //  }
+       // }
 
         setContent {
             WearApp("Android")
@@ -57,8 +77,32 @@ fun WearApp(greetingName: String) {
             contentAlignment = Alignment.Center
         ) {
             TimeText()
+            VibeButton()
             //Greeting(greetingName = greetingName)
         }
+    }
+}
+
+@Composable
+fun VibeButton() {
+    val context = LocalContext.current
+    val vibrator = context.getSystemService(VIBRATOR_SERVICE) as Vibrator
+    var isVibrating by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    Button(onClick = {
+        isVibrating = !isVibrating
+        if (isVibrating) {
+            coroutineScope.launch {
+                while (isVibrating) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+                    delay(1000)
+                }
+            }
+        } else {
+            vibrator.cancel()
+        }
+    }) {
+        Text(text = if (isVibrating) "Stop" else "Vibe")
     }
 }
 
