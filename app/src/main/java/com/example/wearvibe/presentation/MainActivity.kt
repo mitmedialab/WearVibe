@@ -67,21 +67,6 @@ class MainActivity : ComponentActivity() {
         setTheme(android.R.style.Theme_DeviceDefault)
         //setContentView(R.layout.activity_main)
 
-        // Get the Vibrator service
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-
-        // Find the button in the layout
-        //val vibrateButton: Button = findViewById(R.id.vibrate_button)
-        // Set an OnClickListener on the button
-        //vibrateButton.setOnClickListener { // Check if the device has a vibrator
-        //    if (vibrator.hasVibrator()) {
-        //        // Vibrate for 500 milliseconds
-        //        val vibrationEffect =
-        //            VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE)
-         //       vibrator.vibrate(vibrationEffect)
-          //  }
-       // }
-
         setContent {
             WearApp("Android")
         }
@@ -116,29 +101,18 @@ fun VibeButton() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(30.dp),
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-    Button(onClick = {
-        isVibrating = !isVibrating
-        if (isVibrating) {
-            coroutineScope.launch {
-                while (isVibrating) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
-                    delay((1000 / frequency).toLong())
-                }
-            }
-        } else {
-            vibrator.cancel()
-        }
-    }) {
-        Text(text = if (isVibrating) "Stop" else "Vibe")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "WearVibe",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colors.primary
+        )
 
         Text(text = "${frequency.toInt()} Hz",
-            fontSize = 14.sp)
+            fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -155,6 +129,28 @@ fun VibeButton() {
             steps = 69,
             modifier = Modifier.height(24.dp)
         )
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Button(onClick = {
+        isVibrating = !isVibrating
+        if (isVibrating) {
+            coroutineScope.launch {
+                while (isVibrating) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
+                    delay((1000 / frequency).toLong())
+                }
+            }
+        } else {
+            vibrator.cancel()
+        }
+    },
+        modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 2.dp)
+        )
+    {
+        Text(text = if (isVibrating) "Stop" else "Vibe")
+        }
     }
 }
 
