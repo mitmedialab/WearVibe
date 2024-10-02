@@ -109,7 +109,15 @@ fun VibeButton() {
 
         Slider(
             value = frequency,
-            onValueChange = { frequency = it },
+            onValueChange = { newFrequency ->
+                frequency = newFrequency
+
+                if (isVibrating) {
+                    val pattern = longArrayOf(0, 100, (1000 / frequency).toLong())  // Update vibration pattern
+                    vibrator.vibrate(
+                        VibrationEffect.createWaveform(pattern, 0)  // Loop indefinitely
+                    )
+                } },
             colors = SliderDefaults.colors(
                 thumbColor = Color(0xFF2196F3),
                 activeTrackColor = Color(0xFF2196F3),
