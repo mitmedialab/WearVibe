@@ -31,22 +31,12 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Label
-import androidx.compose.material3.PlainTooltip
 import androidx.wear.compose.material.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -57,6 +47,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import androidx.wear.ambient.AmbientModeSupport
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,17 +124,17 @@ fun VibeButton() {
 
         Button(onClick = {
         isVibrating = !isVibrating
-        if (isVibrating) {
-            coroutineScope.launch {
-                while (isVibrating) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
-                    delay((1000 / frequency).toLong())
+            if (isVibrating) {
+                coroutineScope.launch {
+                    val pattern = longArrayOf(0, 100, (1000 / frequency).toLong())  // Vibration pattern
+                    vibrator.vibrate(
+                        VibrationEffect.createWaveform(pattern, 0)  // Loop indefinitely
+                    )
                 }
+            } else {
+                vibrator.cancel()  // Stop vibration
             }
-        } else {
-            vibrator.cancel()
-        }
-    },
+        },
         modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 2.dp)
