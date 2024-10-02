@@ -86,7 +86,10 @@ fun VibeButton() {
     val context = LocalContext.current
     val vibrator = context.getSystemService(VIBRATOR_SERVICE) as Vibrator
     var isVibrating by remember { mutableStateOf(false) }
-    var frequency by remember { mutableStateOf(40f) }
+    val sharedPref = context.getSharedPreferences("wearVibePrefs", Context.MODE_PRIVATE)
+    var frequency by remember {
+        mutableStateOf(sharedPref.getFloat("saved_frequency", 40f)) // Retrieve saved frequency or default to 40f
+    }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -111,6 +114,11 @@ fun VibeButton() {
             value = frequency,
             onValueChange = { newFrequency ->
                 frequency = newFrequency
+
+                with(sharedPref.edit()) {
+                    putFloat("saved_frequency", frequency)
+                    apply() // Save the value
+                }
 
                 if (isVibrating) {
                     val pattern = longArrayOf(0, 100, (1000 / frequency).toLong())  // Update vibration pattern
