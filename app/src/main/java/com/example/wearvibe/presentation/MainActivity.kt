@@ -31,11 +31,20 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.wear.compose.material.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +97,23 @@ fun VibeButton() {
     val context = LocalContext.current
     val vibrator = context.getSystemService(VIBRATOR_SERVICE) as Vibrator
     var isVibrating by remember { mutableStateOf(false) }
+    var frequency by remember { mutableStateOf(40f) }
     val coroutineScope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(30.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
     Button(onClick = {
         isVibrating = !isVibrating
         if (isVibrating) {
             coroutineScope.launch {
                 while (isVibrating) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
-                    delay(1000)
+                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
+                    delay((1000 / frequency).toLong())
                 }
             }
         } else {
@@ -103,6 +121,24 @@ fun VibeButton() {
         }
     }) {
         Text(text = if (isVibrating) "Stop" else "Vibe")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Frequency: ${frequency.toInt()} Hz")
+
+        Slider(
+            value = frequency,
+            onValueChange = { frequency = it },
+            colors = SliderDefaults.colors(
+                thumbColor = Color(0xFF2196F3),
+                activeTrackColor = Color(0xFF2196F3),
+                inactiveTrackColor = Color(0xFFBBDEFB),
+                inactiveTickColor = Color(0xFF687CA5)
+            ),
+            valueRange = 1f..70f,
+            steps = 69,
+            modifier = Modifier.height(24.dp)
+        )
     }
 }
 
