@@ -31,11 +31,22 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Label
+import androidx.compose.material3.PlainTooltip
 import androidx.wear.compose.material.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -45,6 +56,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +104,7 @@ fun WearApp(greetingName: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VibeButton() {
     val context = LocalContext.current
@@ -124,7 +137,10 @@ fun VibeButton() {
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Frequency: ${frequency.toInt()} Hz")
+        Text(text = "${frequency.toInt()} Hz",
+            fontSize = 14.sp)
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Slider(
             value = frequency,
