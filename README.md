@@ -6,6 +6,7 @@ This repository contains the source code for the WearVibe smartwatch app, which 
 
 ## Screenshot
 <img width="342" alt="wearvibe_screenshot" src="https://github.com/user-attachments/assets/a0fbbda9-44cd-4973-8472-bcc9a12b06c2">
+
 You can set your desired frequency of vibration pulses using the slider (e.g., setting to 40 Hz will deliver 10 millisecond pulses of vibration at 40 pulses per second) and click Vibe to start the vibrations.
 
 ## Getting Started
